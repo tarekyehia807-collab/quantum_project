@@ -1,66 +1,51 @@
-## Foundry
+# QuantumVault Protocol
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+[![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://book.getfoundry.sh/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Foundry consists of:
+A professional-grade, security-focused implementation of an **ERC4626 Tokenized Vault** integrated with an external **QuantumStrategy**. This project demonstrates advanced smart contract architecture, rigorous mathematical accounting, and emergency response mechanisms.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Overview
 
-## Documentation
+QuantumVault is designed to manage liquidity by deploying assets into yield-generating strategies while maintaining strict security standards. It handles entry/exit fees, emergency pauses, and seamless strategy migrations.
 
-https://book.getfoundry.sh/
+### Key Technical Specs:
+- **Standard:** ERC4626 (Yield-Bearing Vault).
+- **Upgradeability:** UUPS (Universal Upgradeable Proxy Standard).
+- **Security Pattern:** Checks-Effects-Interactions (CEI).
+- **Access Control:** OpenZeppelin Ownable 2-step.
 
-## Usage
+---
 
-### Build
+## Architecture
 
-```shell
-$ forge build
-```
+The system consists of three main components:
+1. **QuantumVault.sol:** The core logic handling deposits, withdrawals, and fee accounting.
+2. **QuantumStrategy.sol:** A mock strategy implementing the `IStrategy` interface for automated yield simulation.
+3. **Emergency Circuit Breaker:** A global `emergencyPause` that prevents new capital entry while allowing owners to secure the protocol.
 
-### Test
+---
 
-```shell
-$ forge test
-```
+## Security Features & Design Choices
 
-### Format
+this implementation addresses common DeFi vulnerabilities:
 
-```shell
-$ forge fmt
-```
+- **Fee Precision:** Implements Basis Points (BPS) math to prevent precision loss during high-volume transactions.
+- **Liquidity Sync:** Automated reconciliation between Vault idle assets and Strategy deployed assets.
+- **Reentrancy Protection:** Integrated `nonReentrant` modifiers on all state-changing functions.
+- **Access Control:** Strict `onlyOwner` restrictions on critical infrastructure (Fees, Strategy updates, Upgrades).
 
-### Gas Snapshots
+---
 
-```shell
-$ forge snapshot
-```
+## 🧪 Testing Suite
 
-### Anvil
+The protocol is backed by a robust Foundry test suite, covering both "Happy Paths" and "Exploit Scenarios".
 
-```shell
-$ anvil
-```
+### Run Tests:
+```bash
+# Execute full test suite
+forge test -vv
 
-### Deploy
+# Check Gas Efficiency
+forge test --gas-report
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
