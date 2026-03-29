@@ -1,0 +1,10 @@
+# Foundry folders
+out/
+cache/
+broadcast/
+
+# Dependencies (will be re-installed via forge)
+lib/
+
+# Environment variables (security risk!)
+.env
