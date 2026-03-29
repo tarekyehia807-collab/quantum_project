@@ -7,7 +7,7 @@ import {IStrategy} from "../interfaces/IStrategy.sol";
 
 /**
  * @title Quantum Mock Strategy
- * @dev A professional mock strategy contract to simulate yield generation 
+ * @dev A professional mock strategy contract to simulate yield generation
  * and external protocol interactions for the QuantumVault.
  */
 contract QuantumStrategy is IStrategy {
@@ -16,7 +16,7 @@ contract QuantumStrategy is IStrategy {
     // =========================================
     //            State Variables
     // =========================================
-    
+
     // Immutable variables save gas as they are embedded directly into the contract bytecode
     IERC20 public immutable asset;
     address public immutable vault;
@@ -30,7 +30,7 @@ contract QuantumStrategy is IStrategy {
     // =========================================
     //                Modifiers
     // =========================================
-    
+
     /**
      * @dev Restricts access to functions so that only the designated Vault can call them.
      * This prevents random users from directly depositing/withdrawing and messing up accounting.
@@ -46,7 +46,7 @@ contract QuantumStrategy is IStrategy {
     constructor(address _asset, address _vault) {
         require(_asset != address(0), "Invalid asset address");
         require(_vault != address(0), "Invalid vault address");
-        
+
         asset = IERC20(_asset);
         vault = _vault;
     }
@@ -70,7 +70,7 @@ contract QuantumStrategy is IStrategy {
     function deposit(uint256 amount) external override onlyVault returns (uint256) {
         // 1. Pull the funds from the Vault to this Strategy
         asset.safeTransferFrom(vault, address(this), amount);
-        
+
         // 2. Return the amount to match the interface
         return amount;
     }
@@ -78,7 +78,7 @@ contract QuantumStrategy is IStrategy {
     /**
      * @dev Returns assets back to the Vault when users want to withdraw.
      */
-   function withdraw(uint256 amount) external override onlyVault returns (uint256) {
+    function withdraw(uint256 amount) external override onlyVault returns (uint256) {
         // 1. Safety check to ensure we don't try to send more than we have
         if (amount > asset.balanceOf(address(this))) {
             revert QuantumStrategy__InsufficientLiquidity();

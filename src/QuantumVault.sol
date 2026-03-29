@@ -16,13 +16,13 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
  * @title QuantumVault
  * @dev Professional implementation of an ERC4626 Vault with integrated strategy management.
  */
-contract QuantumVault is 
-    Initializable, 
-    ERC4626Upgradeable, 
-    OwnableUpgradeable, 
+contract QuantumVault is
+    Initializable,
+    ERC4626Upgradeable,
+    OwnableUpgradeable,
     ReentrancyGuard,
     UUPSUpgradeable,
-    IQuantumVault 
+    IQuantumVault
 {
     using SafeERC20 for IERC20;
 
@@ -86,7 +86,7 @@ contract QuantumVault is
         return super.maxWithdraw(owner);
     }
 
-  // =========================================
+    // =========================================
     // 3. Fee Engine (Mathematically Consistent)
     // =========================================
     function _feeOnTotal(uint256 assets, uint256 feeBps) internal pure returns (uint256) {
@@ -132,16 +132,20 @@ contract QuantumVault is
         }
     }
 
-    function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override nonReentrant {
+    function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares)
+        internal
+        override
+        nonReentrant
+    {
         if (emergencyPause) revert QuantumVault__EmergencyPauseActive();
 
-        // The 'shares' represent the Gross amount. 
+        // The 'shares' represent the Gross amount.
         // We convert shares back to assets to know exactly how much to pull from strategy.
-        uint256 totalToPull = convertToAssets(shares); 
+        uint256 totalToPull = convertToAssets(shares);
         uint256 fee = totalToPull - assets; // The difference is the fee
-        
+
         uint256 idle = IERC20(asset()).balanceOf(address(this));
-        
+
         if (idle < totalToPull && strategy != address(0)) {
             IStrategy(strategy).withdraw(totalToPull - idle);
         }
@@ -168,7 +172,7 @@ contract QuantumVault is
     }
 
     function updateFees(uint256 newEntryFee, uint256 newExitFee) external override onlyOwner {
-        if (newEntryFee > 1000 || newExitFee > 1000) revert QuantumVault__FeeExceedsMaximum(); 
+        if (newEntryFee > 1000 || newExitFee > 1000) revert QuantumVault__FeeExceedsMaximum();
         entryFeeBasisPoints = newEntryFee;
         exitFeeBasisPoints = newExitFee;
         emit FeesUpdated(newEntryFee, newExitFee);
